@@ -14,16 +14,12 @@
           <div class="pie"></div>
           <a
             href="javascript:;"
-            class="active"
-            @click="letEc1($event, 'typeLT')"
+            class=""
+            v-for="item in leftTopSelect"
+            :key="item.value"
+            @click="letEc1($event, item.value)"
           >
-            <i class="icon-dot" style="color: #006cff"></i>设备类型分布</a
-          >
-          <a href="javascript:;" @click="letEc1($event, 'distributionLT')">
-            <i class="icon-dot" style="color: #006cff"></i>设备协议分布</a
-          >
-          <a href="javascript:;" @click="letEc1($event, 'treatyLT')">
-            <i class="icon-dot" style="color: #006cff"></i>厂商分布</a
+            <i class="icon-dot" style="color: #006cff">{{ item.label }}</i></a
           >
         </div>
         <!--中国工控设备状态-->
@@ -31,16 +27,12 @@
           <div class="bar-a"></div>
           <a
             href="javascript:;"
-            class="active"
-            @click="letEc2($event, 'typeLC')"
+            class=""
+            v-for="item in leftCenterSelect"
+            :key="item.value"
+            @click="letEc2($event, item.value)"
           >
-            <i class="icon-dot" style="color: #006cff"></i>设备类型分布</a
-          >
-          <a href="javascript:;" @click="letEc2($event, 'statisticsLC')">
-            <i class="icon-dot" style="color: #006cff"></i>设备协议分布</a
-          >
-          <a href="javascript:;" @click="letEc2($event, 'distributionLC')">
-            <i class="icon-dot" style="color: #006cff"></i>厂商分布</a
+            <i class="icon-dot" style="color: #006cff">{{ item.label }}</i></a
           >
         </div>
         <!--工控地理分布图-->
@@ -66,11 +58,33 @@
       </div>
       <div class="column right">
         <!--工控漏洞-->
-        <div class="bd3 r-one"></div>
+        <div class="bd3 r-one">
+          <div class="bd-header">工控漏洞</div>
+          <div class="rightTopData"></div>
+          <a href="javascript:;" class="active">
+            <i class="icon-dot" style="color: #006cff"></i>漏洞类型分布</a
+          >
+          <a href="javascript:;">
+            <i class="icon-dot" style="color: #006cff"></i>设备协议分布</a
+          >
+          <a href="javascript:;" @click="letEc1($event, 'treatyLT')">
+            <i class="icon-dot" style="color: #006cff"></i>厂商分布</a
+          >
+        </div>
         <!--工控设备漏洞状态-->
-        <div class="bd3 r-two"></div>
+        <div class="bd3 r-two">
+          <div class="rightCenterData"></div>
+        </div>
         <!--安全预警日志-->
-        <div class="bd3 r-three"></div>
+        <div class="bd3 r-three">
+          <div class="bd-header">安全预警日志</div>
+          <ul id="log">
+            <li v-for="item in logList" :key="item">
+              <span></span>
+              {{ item.content }}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </body>
@@ -83,6 +97,45 @@ export default {
   name: "HelloWorld",
   data() {
     return {
+      // 安全预警日志数据
+      logList: [
+        { content: "发现工控漏洞信息23条" },
+        { content: " 新发现僵尸设备16个" },
+        { content: "  新发现漏洞设备8个" },
+        { content: " 新发现僵尸设备98个" },
+        { content: " 新发现漏洞设备12个" },
+        { content: " 新发现漏洞设备23个" },
+      ],
+      curLogList: [],
+      // 交互切换数据（两组）
+      leftTopSelect: [
+        {
+          value: "typeLT",
+          label: "设备类型分布",
+        },
+        {
+          value: "treatyLT",
+          label: "设备协议分布",
+        },
+        {
+          value: "distributionLT",
+          label: "厂商分布",
+        },
+      ],
+      leftCenterSelect: [
+        {
+          value: "typeLC",
+          label: "设备类型分布",
+        },
+        {
+          value: "statisticsLC",
+          label: "行业设备分布",
+        },
+        {
+          value: "distributionLC",
+          label: "企业分布",
+        },
+      ],
       ec1Data: {
         // 工控设备切换数据
         typeLT: [
@@ -194,8 +247,15 @@ export default {
     this.ec3();
     this.cTL();
     this.midBot();
+    this.rTD();
+    this.rCD();
   },
   methods: {
+    // 安全预警日志
+    pushLog() {
+      setInterval(() => {}, 5000);
+    },
+
     // 工控设备切换
     letEc1(e, data) {
       // 样式
@@ -221,7 +281,6 @@ export default {
             avoidLabelOverlap: true,
             radius: ["30%", "50%"],
             center: ["50%", "50%"],
-            // data: this.ec1Data.typeLT,
             data: data,
           },
         ],
@@ -403,6 +462,93 @@ export default {
       var myChart = echarts.init($(".ele")[0]);
       myChart.setOption(option);
     },
+    // 工控漏洞数据
+    rTD() {
+      var option = {
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b} : {c} ({d}%)",
+        },
+        series: [
+          {
+            type: "pie",
+            radius: "65%",
+            center: ["50%", "50%"],
+            selectedMode: "single",
+            data: [
+              { name: "未分类", value: 207 },
+              { name: "缓冲区错误", value: 73 },
+              { name: "信息泄露", value: 70 },
+              { name: "缓冲区边界操作限制不当", value: 69 },
+              { name: "输入验证不当", value: 60 },
+              { name: "跨站脚本", value: 42 },
+              { name: "路径遍历", value: 29 },
+              { name: "跨站请求伪造", value: 20 },
+              { name: "授权问题", value: 20 },
+            ],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+              },
+            },
+          },
+        ],
+      };
+      var myChart = echarts.init($(".rightTopData")[0]);
+      myChart.setOption(option);
+    },
+    // 中国工控设备漏洞状况数据
+    rCD() {
+      var option = {
+        title: {
+          text: "中国工控设备漏洞状况数据",
+          left: "center",
+          textStyle: {
+            color: "#ccc",
+          },
+        },
+        xAxis: {
+          type: "category",
+          data: ["危急", "高危", "中危"],
+          axisLabel: {
+            interval: 0,
+            rotate: 40,
+            color: "#ccc",
+            fontSize: 10,
+          },
+        },
+        yAxis: {
+          type: "value",
+          axisLabel: {
+            color: "#ccc",
+            fontSize: 10,
+          },
+        },
+        series: [
+          {
+            data: [26, 15, 4],
+            type: "bar",
+            barWidth: 20, //柱图宽度
+            color: {
+              colorStops: [
+                {
+                  offset: 0,
+                  color: "skyblue", // 0% 处的颜色
+                },
+                {
+                  offset: 1,
+                  color: "blue", // 100% 处的颜色
+                },
+              ],
+            },
+          },
+        ],
+      };
+      var myChart = echarts.init($(".rightCenterData")[0]);
+      myChart.setOption(option);
+    },
   },
 };
 </script>
@@ -451,6 +597,12 @@ a {
   }
 }
 
+.bd-header {
+  margin-top: 5px;
+  color: #ccc;
+  text-align: center;
+}
+
 .viewport {
   max-width: 1920px;
   min-width: 1024px;
@@ -482,11 +634,6 @@ a {
       .pie {
         margin-top: 20px;
         height: 175px;
-      }
-      .bd-header {
-        margin-top: 5px;
-        color: #ccc;
-        text-align: center;
       }
       a {
         font-size: 14px;
@@ -556,6 +703,7 @@ a {
   .right {
     flex: 1;
     margin-left: 35px;
+    margin-top: 20px;
 
     .bd3 {
       height: 260px;
@@ -563,9 +711,25 @@ a {
       border: solid #043568 2px;
       border-radius: 5px;
     }
+    .rightTopData {
+      height: 205px;
+    }
+    .rightCenterData {
+      height: 250px;
+    }
 
     .r-two {
       margin: 20px 0 20px 0;
+    }
+    .r-three {
+      #log {
+        li {
+          height: 38px;
+          line-height: 38px;
+          color: rgb(140,140,140);
+          font-size: 14px;
+        }
+      }
     }
   }
 }
