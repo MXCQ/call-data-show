@@ -1,58 +1,572 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+  <body>
+    <!-- 头部 -->
+    <div class="top">
+      <img src="../assets/1.png" alt class="img1" />
+      <span>工业互联网重要资源测绘与安全分析平台</span>
+      <img src="../assets/2.png" alt class="img2" />
+    </div>
+    <div class="viewport">
+      <div class="column left">
+        <!--工控设备-->
+        <div class="bd ec1">
+          <div class="bd-header">工控设备</div>
+          <div class="pie"></div>
+          <a
+            href="javascript:;"
+            class="active"
+            @click="letEc1($event, 'typeLT')"
+          >
+            <i class="icon-dot" style="color: #006cff"></i>设备类型分布</a
+          >
+          <a href="javascript:;" @click="letEc1($event, 'distributionLT')">
+            <i class="icon-dot" style="color: #006cff"></i>设备协议分布</a
+          >
+          <a href="javascript:;" @click="letEc1($event, 'treatyLT')">
+            <i class="icon-dot" style="color: #006cff"></i>厂商分布</a
+          >
+        </div>
+        <!--中国工控设备状态-->
+        <div class="bd ec2">
+          <div class="bar-a"></div>
+          <a
+            href="javascript:;"
+            class="active"
+            @click="letEc2($event, 'typeLC')"
+          >
+            <i class="icon-dot" style="color: #006cff"></i>设备类型分布</a
+          >
+          <a href="javascript:;" @click="letEc2($event, 'statisticsLC')">
+            <i class="icon-dot" style="color: #006cff"></i>设备协议分布</a
+          >
+          <a href="javascript:;" @click="letEc2($event, 'distributionLC')">
+            <i class="icon-dot" style="color: #006cff"></i>厂商分布</a
+          >
+        </div>
+        <!--工控地理分布图-->
+        <div class="bd ec3">
+          <div class="bar-b"></div>
+        </div>
+      </div>
+      <div class="column middle">
+        <div class="m-one">
+          <!--健康-->
+          <div class="m-one-1 bd2"></div>
+          <!--工控个数-->
+          <div class="m-one-2 bd2"></div>
+          <!--工控种类-->
+          <div class="m-one-3 bd2"></div>
+        </div>
+        <!--地图-->
+        <div class="m-two"></div>
+        <!--事件/告警数据趋势-->
+        <div class="m-three">
+          <div class="ele"></div>
+        </div>
+      </div>
+      <div class="column right">
+        <!--工控漏洞-->
+        <div class="bd3 r-one"></div>
+        <!--工控设备漏洞状态-->
+        <div class="bd3 r-two"></div>
+        <!--安全预警日志-->
+        <div class="bd3 r-three"></div>
+      </div>
+    </div>
+  </body>
 </template>
 
 <script>
+import echarts from "echarts";
+import $ from "jquery";
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  name: "HelloWorld",
+  data() {
+    return {
+      ec1Data: {
+        // 工控设备切换数据
+        typeLT: [
+          { name: "SDS", value: 977 },
+          { name: "PLC", value: 815 },
+          { name: "SCADA", value: 251 },
+          { name: "DCS_C", value: 86 },
+          { name: "RTU", value: 60 },
+          { name: "RPD", value: 23 },
+          { name: "Communications Adapter", value: 22 },
+          { name: "CPIE", value: 8 },
+          { name: "HMI", value: 7 },
+        ],
+        distributionLT: [
+          { name: "moxa", value: 1027 },
+          { name: "advantech", value: 247 },
+          { name: "siemens", value: 241 },
+          { name: "schneider", value: 234 },
+          { name: "omron", value: 122 },
+          { name: "allen-bradley", value: 111 },
+          { name: "abb", value: 110 },
+          { name: "rockwell", value: 73 },
+          { name: "honeywell", value: 31 },
+          // {name: "其他", value: 128}
+        ],
+        treatyLT: [
+          { name: "telnet", value: 557 },
+          { name: "moxanport", value: 466 },
+          { name: "http", value: 309 },
+          { name: "modbus", value: 264 },
+          { name: "s7", value: 218 },
+          { name: "ethernetip", value: 185 },
+          { name: "https", value: 151 },
+          { name: "snmp", value: 49 },
+          { name: "ftp", value: 46 },
+          // {name: "其他", value: 91}
+        ],
+      },
+      ec2Data: {
+        typeLC: {
+          xData: [
+            "SDS",
+            "PLC",
+            "DAM",
+            "SCADA",
+            "DCS_C",
+            "HMI",
+            "RTU",
+            "RPD",
+            "Communications Adapter",
+          ],
+          yData: [988, 868, 452, 251, 86, 73, 70, 23, 22],
+        },
+        statisticsLC: {
+          xData: [
+            "能源",
+            "交通",
+            "汽车",
+            "家电",
+            "医疗",
+            "银行",
+            "自动化",
+            "快递",
+            "服务",
+          ],
+          yData: [1383, 1366, 1166, 1037, 986, 969, 810, 428, 334],
+        },
+        distributionLC: {
+          xData: [
+            "机械",
+            "交通",
+            "汽车",
+            "家电",
+            "医疗",
+            "银行",
+            "餐饮",
+            "快递",
+            "服务",
+          ],
+          yData: [163, 166, 156, 137, 126, 119, 110, 108, 104],
+        },
+      },
+      ec3Data: {
+        title: "工控蜜罐地理分布图",
+        xData: [
+          "新北市",
+          "高雄市",
+          "台北市",
+          "台南市",
+          "云林县",
+          "台中市",
+          "苗栗县",
+          "桃园市",
+          "上海",
+          "阜阳",
+        ],
+        yData: [62, 39, 33, 21, 17, 14, 10, 9, 8, 8],
+      },
+      // 健康数值
+      centerTopLeft: {
+        value: 77,
+      },
+    };
+  },
+  mounted() {
+    // 工控设备
+    this.ec1(this.ec1Data.typeLT);
+    this.ec2(this.ec2Data.typeLC);
+    this.ec3();
+    this.cTL();
+    this.midBot();
+  },
+  methods: {
+    // 工控设备切换
+    letEc1(e, data) {
+      // 样式
+      $(e.target)
+        .addClass("active")
+        .siblings()
+        .removeClass("active");
+      var currData = this.ec1Data[data];
+      this.ec1(currData);
+    },
+    // 工控设备
+    ec1(data) {
+      var option = {
+        tooltip: {
+          trigger: "item",
+          formatter: "{a} <br/>{b} : {c} ({d}%)",
+        },
+        series: [
+          {
+            name: "",
+            type: "pie",
+            minAngle: 5,
+            avoidLabelOverlap: true,
+            radius: ["30%", "50%"],
+            center: ["50%", "50%"],
+            // data: this.ec1Data.typeLT,
+            data: data,
+          },
+        ],
+      };
+      var myChart = echarts.init($(".pie")[0]);
+      myChart.setOption(option);
+    },
+    // 中国工控设备状态切换
+    letEc2(e, data) {
+      // 样式
+      $(e.target)
+        .addClass("active")
+        .siblings()
+        .removeClass("active");
+      var currData = this.ec2Data[data];
+      this.ec2(currData);
+    },
+    // 中国工控设备状态
+    ec2(data) {
+      var option = {
+        title: {
+          text: "中国工控设备状态",
+          left: "center",
+          textStyle: {
+            color: "#ccc",
+          },
+        },
+        xAxis: {
+          type: "category",
+          data: data.xData,
+          axisLabel: {
+            interval: 0,
+            rotate: 40,
+            color: "#ccc",
+            fontSize: 10,
+          },
+        },
+        yAxis: {
+          type: "value",
+          axisLabel: {
+            color: "#ccc",
+            fontSize: 10,
+          },
+        },
+        series: [
+          {
+            data: data.yData,
+            type: "bar",
+            color: {
+              colorStops: [
+                {
+                  offset: 0,
+                  color: "skyblue", // 0% 处的颜色
+                },
+                {
+                  offset: 1,
+                  color: "blue", // 100% 处的颜色
+                },
+              ],
+            },
+          },
+        ],
+      };
+      var myChart = echarts.init($(".bar-a")[0]);
+      myChart.setOption(option);
+    },
+    // 工控蜜罐地理分布图
+    ec3() {
+      var option = {
+        title: {
+          text: this.ec3Data.title,
+          left: "center",
+          textStyle: {
+            color: "#ccc",
+          },
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true,
+        },
+        xAxis: {
+          type: "value",
+          boundaryGap: [0, 0.01],
+          axisLabel: {
+            color: "#ccc",
+            fontSize: 10,
+          },
+        },
+        yAxis: {
+          type: "category",
+          data: this.ec3Data.xData,
+          axisLabel: {
+            interval: 0,
+            rotate: 40,
+            color: "#ccc",
+            fontSize: 10,
+          },
+        },
+        series: [
+          {
+            name: "2011年",
+            type: "bar",
+            data: this.ec3Data.yData,
+            color: "skyblue",
+          },
+        ],
+      };
+      var myChart = echarts.init($(".bar-b")[0]);
+      myChart.setOption(option);
+    },
+    // 健康数值
+    cTL() {
+      var option = {
+        tooltip: {
+          formatter: "{a} <br/>{b} : {c}%",
+        },
+        toolbox: {
+          feature: {
+            restore: {},
+            saveAsImage: {},
+          },
+        },
+        series: [
+          {
+            type: "gauge",
+            radius: "100%",
+            detail: { show: false },
+            data: [{ value: this.centerTopLeft.value }],
+            axisLabel: {
+              // 刻度标签。
+              color: "#fff",
+              fontSize: 12,
+              formatter: "{value}",
+            },
+          },
+        ],
+      };
+      var myChart = echarts.init($(".m-one-1")[0]);
+      myChart.setOption(option);
+    },
+    // 事件/告警数量趋势图数据
+    midBot() {
+      var option = {
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: [
+            "2019 12-24",
+            "2019 12-25",
+            "2019 12-26",
+            "2019 12-27",
+            "2019 12-28",
+            "2019 12-29",
+            "2019 12-30",
+          ],
+        },
+        yAxis: {
+          type: "value",
+        },
+        series: [
+          {
+            data: [150, 232, 201, 154, 190, 330, 410],
+            type: "line",
+            areaStyle: {
+              color: "red",
+            },
+          },
+          {
+            data: [120, 132, 101, 134, 90, 230, 210],
+            type: "line",
+            areaStyle: {
+              color: "#333",
+            },
+          },
+        ],
+      };
+      var myChart = echarts.init($(".ele")[0]);
+      myChart.setOption(option);
+    },
+  },
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
+<style scoped lang="less">
+* {
+  margin: 0;
   padding: 0;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+h4,
+h3,
+ul {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+ul {
+  list-style: none;
 }
 a {
-  color: #42b983;
+  text-decoration: none;
+}
+// ----------------头部-----------------
+.top {
+  height: 40px;
+  width: 100%;
+  background-color: #02234d;
+  .img1 {
+    position: absolute;
+    top: 10px;
+    height: 40px;
+    width: 80px;
+  }
+  span {
+    font-size: 20px;
+    color: white;
+    line-height: 40px;
+    padding-left: 90px;
+  }
+  .img2 {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    height: 40px;
+    width: 80px;
+  }
+}
+
+.viewport {
+  max-width: 1920px;
+  min-width: 1024px;
+  margin: 0 auto;
+  min-height: 780px;
+  display: flex;
+
+  .column {
+    flex: 2;
+  }
+  .column:nth-of-type(2) {
+    flex: 4;
+    margin: 1.333rem 0.833rem 0;
+  }
+
+  // 左边
+  .left {
+    width: 100%;
+    padding: 20px;
+    .bd {
+      height: 260px;
+      border: 1px solid blue;
+      border-radius: 5px;
+    }
+    /* 工控设备 */
+    .ec1 {
+      overflow: hidden;
+      box-sizing: border-box;
+      .pie {
+        margin-top: 20px;
+        height: 175px;
+      }
+      .bd-header {
+        margin-top: 5px;
+        color: #ccc;
+        text-align: center;
+      }
+      a {
+        font-size: 14px;
+        padding: 3px;
+      }
+    }
+    .ec1 a.active,
+    .ec2 a.active {
+      color: #a3c6f2;
+      background-color: rgba(10, 67, 188, 0.2);
+    }
+
+    /* 中国工控设备状态 */
+    .ec2 {
+      margin: 20px 0 20px 0;
+      .bar-a {
+        height: 220px;
+      }
+    }
+
+    // 左边下面表格
+    .ec3 {
+      .bar-b {
+        height: 220px;
+      }
+    }
+  }
+
+  // 中间
+  .middle {
+    // 中间上边盒子
+    .m-one {
+      height: 160px;
+      width: 100%;
+      display: flex;
+      .bd2 {
+        border: solid #043568 2px;
+        border-radius: 5px;
+      }
+      .m-one-1 {
+        flex: 2;
+      }
+      .m-one-2 {
+        flex: 2;
+        margin: 0 20px 0 20px;
+      }
+      .m-one-3 {
+        flex: 3;
+      }
+    }
+    .m-two {
+      height: 455px;
+      width: 100%;
+    }
+    .m-three {
+      height: 200px;
+      border: solid #043568 2px;
+      border-radius: 5px;
+      .ele {
+        // width: 300px;
+        height: 200px;
+      }
+    }
+  }
+
+  // ------------右边--------------
+  .right {
+    flex: 1;
+    margin-left: 35px;
+
+    .bd3 {
+      height: 260px;
+      width: 340px;
+      border: solid #043568 2px;
+      border-radius: 5px;
+    }
+
+    .r-two {
+      margin: 20px 0 20px 0;
+    }
+  }
 }
 </style>
